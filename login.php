@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // If no errors, attempt login
     if (empty($errors)) {
         try {
-            $user = $userModel->login($email, $password);
+            $user = $userModel->findByEmail($email, $password);
             if ($user) {
                 // Set session variables
                 $_SESSION['user_id'] = $user['id_user'];
