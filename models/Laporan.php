@@ -1,10 +1,9 @@
 <?php
-// models/Laporan.php (Versi Final dengan Perbaikan Konsistensi)
 
 class Laporan {
     protected $pdo;
 
-    // Konstruktor sudah benar, menggunakan $pdo
+    // Konstruktor menggunakan $pdo
     public function __construct(PDO $db_connection) {
         $this->pdo = $db_connection;
     }
@@ -28,33 +27,31 @@ class Laporan {
                         ELSE 4
                     END, l.tanggal_lapor DESC";
         
-        $stmt = $this->pdo->query($sql); // Sudah benar menggunakan $this->pdo
+        $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ... (Fungsi-fungsi di bawah ini sekarang sudah diperbaiki semua) ...
-
     public function buatLaporanBaru($idPelapor, $idFasilitas, $deskripsi) {
         try {
-            $this->pdo->beginTransaction(); // DIUBAH dari $this->conn
+            $this->pdo->beginTransaction();
 
-            $stmtLaporan = $this->pdo->prepare( // DIUBAH dari $this->conn
+            $stmtLaporan = $this->pdo->prepare(
                 "INSERT INTO laporan (id_pelapor, id_fasilitas, deskripsi_kerusakan, status, tanggal_lapor) 
                  VALUES (?, ?, ?, 'Baru', NOW())"
             );
             $stmtLaporan->execute([$idPelapor, $idFasilitas, $deskripsi]);
-            $laporanId = $this->pdo->lastInsertId(); // DIUBAH dari $this->conn
+            $laporanId = $this->pdo->lastInsertId();
 
-            $stmtNotifikasi = $this->pdo->prepare( // DIUBAH dari $this->conn
+            $stmtNotifikasi = $this->pdo->prepare(
                 "INSERT INTO notifikasi (id_laporan, pesan) 
                  VALUES (?, 'Laporan baru telah masuk!')"
             );
             $stmtNotifikasi->execute([$laporanId]);
 
-            $this->pdo->commit(); // DIUBAH dari $this->conn
+            $this->pdo->commit(); 
             return true;
         } catch (PDOException $e) {
-            $this->pdo->rollBack(); // DIUBAH dari $this->conn
+            $this->pdo->rollBack(); 
             throw new Exception("Gagal membuat laporan: " . $e->getMessage());
         }
     }
@@ -67,7 +64,7 @@ class Laporan {
                       JOIN users u ON l.id_pelapor = u.id_user 
                       ORDER BY l.tanggal_lapor DESC 
                       LIMIT ?";
-            $stmt = $this->pdo->prepare($query); // DIUBAH dari $this->conn
+            $stmt = $this->pdo->prepare($query);
             $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -78,7 +75,7 @@ class Laporan {
 
     public function getTotalReports() {
         try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM laporan"); // DIUBAH
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM laporan"); 
             $stmt->execute();
             return $stmt->fetchColumn();
         } catch (PDOException $e) {
@@ -93,7 +90,7 @@ class Laporan {
                       JOIN fasilitas f ON l.id_fasilitas = f.id_fasilitas 
                       JOIN users u ON l.id_pelapor = u.id_user 
                       WHERE l.status = ?";
-            $stmt = $this->pdo->prepare($query); // DIUBAH
+            $stmt = $this->pdo->prepare($query); 
             $stmt->execute([$status]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -108,7 +105,7 @@ class Laporan {
                       JOIN fasilitas f ON l.id_fasilitas = f.id_fasilitas 
                       JOIN users u ON l.id_pelapor = u.id_user 
                       WHERE l.id_laporan = ?";
-            $stmt = $this->pdo->prepare($query); // DIUBAH
+            $stmt = $this->pdo->prepare($query); 
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

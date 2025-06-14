@@ -1,32 +1,25 @@
 <?php
-// teknisi_dashboard.php (Versi Final yang Disesuaikan)
 
 $page_title = 'Panel Teknisi'; 
 
-// Panggil header. File ini sudah otomatis menjalankan session_start().
+// Panggil header
 require_once 'includes/header.php';
 
 // Memanggil file-file yang dibutuhkan
 require_once 'config/database.php'; // Ini berisi class Database
 require_once 'models/Laporan.php';   // Ini berisi class Laporan
 
-// ======================= PERUBAHAN UTAMA ADA DI SINI =======================
-// Mendapatkan koneksi database dengan cara yang BENAR sesuai file database.php Anda
 
 // 1. Buat objek dari class Database
 $database = new Database();
 // 2. Panggil method getConnection() untuk mendapatkan koneksi PDO
 $db_connection = $database->getConnection();
-// =========================================================================
 
-// --- KEAMANAN ---
-// Blok ini sekarang menggunakan variabel sesi 'role' sesuai gambar database Anda
-// Jika Anda ingin menonaktifkan sementara untuk development, beri komentar pada blok ini.
+// KEAMANAN
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['teknisi', 'admin'])) {
     header("Location: teknisi_login.php?pesan=tidak_diizinkan");
     exit();
 }
-// ----------------
 
 // Inisialisasi variabel
 $laporan_list = [];

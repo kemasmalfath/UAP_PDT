@@ -1,11 +1,8 @@
 <?php
-// models/User.php (Versi Final yang Disesuaikan)
 
 class User {
-    // Menggunakan $pdo agar konsisten dengan file lain (login.php, dll)
     protected $pdo;
 
-    // Mengubah parameter $db menjadi $pdo agar seragam
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
     }
@@ -31,10 +28,6 @@ class User {
         }
     }
 
-    /**
-     * Fungsi register disesuaikan agar konsisten.
-     * Menggunakan nama kolom 'nama' dan 'role' sesuai struktur database Anda.
-     */
     public function register($nama, $email, $password, $role = 'user') {
         try {
             // Cek apakah email sudah ada
@@ -58,10 +51,7 @@ class User {
             throw new Exception("Error saat registrasi: " . $e->getMessage());
         }
     }
-    
-    /**
-     * Fungsi ini sudah OK, hanya memastikan nama kolomnya benar.
-     */
+
     public function getUserById($id) {
         try {
             $query = "SELECT id_user, nama, email, role FROM users WHERE id_user = ?";
@@ -73,9 +63,7 @@ class User {
         }
     }
     
-    /**
-     * Fungsi ini juga sudah OK, hanya memastikan nama kolomnya benar.
-     */
+
     public function getAllTeknisi() {
         try {
             $query = "SELECT id_user, nama FROM users WHERE role = 'teknisi' ORDER BY nama ASC";

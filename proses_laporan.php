@@ -46,28 +46,4 @@ try {
     // Jika ada error dari sisi database, tampilkan pesan error yang jelas
     die("DATABASE ERROR: Gagal memproses laporan. " . $e->getMessage());
 }
-
-/*
---- CATATAN PENTING ---
-Pastikan Stored Procedure `proses_laporan` sudah ada di database MySQL Anda.
-Contoh SQL untuk membuatnya:
-
-DELIMITER $$
-CREATE PROCEDURE `proses_laporan`(
-    IN `p_id_laporan` INT,
-    IN `p_id_teknisi` INT,
-    IN `p_status_baru` VARCHAR(50),
-    IN `p_estimasi_selesai` DATE
-)
-BEGIN
-    UPDATE laporan
-    SET 
-        status = p_status_baru,
-        id_teknisi = p_id_teknisi,
-        estimasi_selesai = p_estimasi_selesai
-    WHERE id_laporan = p_id_laporan;
-END$$
-DELIMITER ;
-
-*/
 ?>

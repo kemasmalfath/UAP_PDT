@@ -1,5 +1,4 @@
 <?php
-// teknisi_login.php (Versi Final)
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
@@ -31,14 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $userModel = new User($db_connection);
         
-        // ======================= PERUBAHAN UTAMA DI SINI =======================
-        // Memanggil method findByEmail() yang benar dari model User
+        // Memanggil method findByEmail()
         $user = $userModel->findByEmail($email);
 
-        // Verifikasi password dan peran dilakukan di sini, bukan di dalam model
+        // Verifikasi password dan peran
         if ($user && password_verify($password, $user['password']) && in_array($user['role'], ['teknisi', 'admin'])) {
-        // =====================================================================
-            
+
             // Jika semua verifikasi berhasil
             session_regenerate_id(true); 
             $_SESSION['user_id'] = $user['id_user'];
