@@ -1,36 +1,46 @@
 <?php
-// teknisi_dashboard.php
+// teknisi_dashboard.php (Versi Final yang Disesuaikan)
 
-// Atur judul halaman dinamis yang akan digunakan di header
 $page_title = 'Panel Teknisi'; 
 
-// Panggil header. File ini sudah berisi session_start(), auth check, koneksi db, dan navbar
+// Panggil header. File ini sudah otomatis menjalankan session_start().
 require_once 'includes/header.php';
 
+// Memanggil file-file yang dibutuhkan
+require_once 'config/database.php'; // Ini berisi class Database
+require_once 'models/Laporan.php';   // Ini berisi class Laporan
+
+// ======================= PERUBAHAN UTAMA ADA DI SINI =======================
+// Mendapatkan koneksi database dengan cara yang BENAR sesuai file database.php Anda
+
+// 1. Buat objek dari class Database
+$database = new Database();
+// 2. Panggil method getConnection() untuk mendapatkan koneksi PDO
+$db_connection = $database->getConnection();
+// =========================================================================
+
 // --- KEAMANAN ---
-// Lindungi halaman ini. Hanya peran 'teknisi' atau 'admin' yang boleh mengakses.
-if (!isset($_SESSION['peran']) || ($_SESSION['peran'] !== 'teknisi' && $_SESSION['peran'] !== 'admin')) {
-    // Jika peran tidak sesuai, tendang ke halaman utama dengan pesan error.
-    header("Location: index.php?pesan=tidak_diizinkan");
+// Blok ini sekarang menggunakan variabel sesi 'role' sesuai gambar database Anda
+// Jika Anda ingin menonaktifkan sementara untuk development, beri komentar pada blok ini.
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['teknisi', 'admin'])) {
+    header("Location: teknisi_login.php?pesan=tidak_diizinkan");
     exit();
 }
-
-// Panggil model yang diperlukan untuk mengambil data dari database
-require_once 'models/Laporan.php';
+// ----------------
 
 // Inisialisasi variabel
 $laporan_list = [];
 $teknisi_list = [];
 
 try {
-    // Buat instance dari model Laporan
-    $laporanModel = new Laporan($pdo);
+    // 3. Berikan koneksi ($db_connection) ke model Laporan
+    $laporanModel = new Laporan($db_connection);
     
     // Ambil semua data laporan dari database
-    $laporan_list = $laporanModel->getAllLaporan(); // Asumsi method ini ada di Laporan.php
+    $laporan_list = $laporanModel->getAllLaporan();
 
-    // Ambil daftar semua teknisi untuk dropdown penugasan
-    $teknisi_stmt = $pdo->query("SELECT id_teknisi, nama_teknisi FROM teknisi ORDER BY nama_teknisi ASC");
+    // 4. Gunakan koneksi ($db_connection) juga untuk query langsung
+    $teknisi_stmt = $db_connection->query("SELECT id_teknisi, nama_teknisi FROM teknisi ORDER BY nama_teknisi ASC");
     $teknisi_list = $teknisi_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
@@ -61,7 +71,7 @@ try {
                 <tbody>
                     <?php if (empty($laporan_list)): ?>
                         <tr>
-                            <td colspan="8" class="text-center">Tidak ada laporan kerusakan untuk ditampilkan.</td>
+                            <td colspan="8" class="text-center p-4">Tidak ada laporan kerusakan untuk ditampilkan.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($laporan_list as $laporan): ?>
@@ -76,9 +86,8 @@ try {
                                 <td><?= date('d M Y, H:i', strtotime($laporan['tanggal_lapor'])) ?></td>
                                 <td>
                                     <?php
-                                        // Logika untuk warna badge status
                                         $status = $laporan['status'];
-                                        $badge_class = 'bg-secondary'; // Default
+                                        $badge_class = 'bg-secondary';
                                         if ($status == 'Baru') $badge_class = 'bg-danger';
                                         if ($status == 'Ditangani') $badge_class = 'bg-warning text-dark';
                                         if ($status == 'Selesai') $badge_class = 'bg-success';
@@ -93,55 +102,20 @@ try {
                                 </td>
                             </tr>
 
-                            <div class="modal fade" id="prosesModal-<?= $laporan['id_laporan'] ?>" tabindex="-1" aria-labelledby="modalLabel-<?= $laporan['id_laporan'] ?>" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form action="proses_laporan.php" method="POST">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalLabel-<?= $laporan['id_laporan'] ?>">Proses Laporan #<?= htmlspecialchars($laporan['id_laporan']) ?></h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" name="id_laporan" value="<?= $laporan['id_laporan'] ?>">
-                                                
-                                                <div class="mb-3">
-                                                    <label class="form-label"><strong>Fasilitas:</strong></label>
-                                                    <p class="form-control-plaintext"><?= htmlspecialchars($laporan['nama_fasilitas']) ?> di <?= htmlspecialchars($laporan['lokasi']) ?></p>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="status-<?= $laporan['id_laporan'] ?>" class="form-label">Ubah Status Laporan</label>
-                                                    <select name="status" id="status-<?= $laporan['id_laporan'] ?>" class="form-select" required>
-                                                        <option value="Ditangani" <?= $laporan['status'] == 'Ditangani' ? 'selected' : '' ?>>Ditangani</option>
-                                                        <option value="Selesai" <?= $laporan['status'] == 'Selesai' ? 'selected' : '' ?>>Selesai</option>
-                                                        <option value="Ditolak" <?= $laporan['status'] == 'Ditolak' ? 'selected' : '' ?>>Ditolak</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="id_teknisi-<?= $laporan['id_laporan'] ?>" class="form-label">Tugaskan Teknisi</label>
-                                                    <select name="id_teknisi" id="id_teknisi-<?= $laporan['id_laporan'] ?>" class="form-select" required>
-                                                        <option value="">-- Pilih Teknisi --</option>
-                                                        <?php foreach ($teknisi_list as $teknisi): ?>
-                                                            <option value="<?= $teknisi['id_teknisi'] ?>" <?= $laporan['id_teknisi'] == $teknisi['id_teknisi'] ? 'selected' : '' ?>>
-                                                                <?= htmlspecialchars($teknisi['nama_teknisi']) ?>
-                                                            </option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-
-                                                 <div class="mb-3">
-                                                    <label for="estimasi_selesai-<?= $laporan['id_laporan'] ?>" class="form-label">Estimasi Selesai (Opsional)</label>
-                                                    <input type="date" name="estimasi_selesai" id="estimasi_selesai-<?= $laporan['id_laporan'] ?>" class="form-control" value="<?= htmlspecialchars($laporan['estimasi_selesai']) ?>">
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                <button type="submit" class="btn btn-success">Simpan Perubahan</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                            <div class="modal fade" id="prosesModal-<?= $laporan['id_laporan'] ?>" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog"><div class="modal-content">
+                                    <form action="proses_laporan.php" method="POST">
+                                        <div class="modal-header"><h5 class="modal-title">Proses Laporan #<?= $laporan['id_laporan'] ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="id_laporan" value="<?= $laporan['id_laporan'] ?>">
+                                            <div class="mb-3"><p><strong>Fasilitas:</strong> <?= htmlspecialchars($laporan['nama_fasilitas']) ?></p></div>
+                                            <div class="mb-3"><label class="form-label">Ubah Status</label><select name="status" class="form-select" required><option value="Ditangani">Ditangani</option><option value="Selesai">Selesai</option><option value="Ditolak">Ditolak</option></select></div>
+                                            <div class="mb-3"><label class="form-label">Tugaskan Teknisi</label><select name="id_teknisi" class="form-select" required><option value="">Pilih Teknisi</option><?php foreach ($teknisi_list as $teknisi): ?><option value="<?= $teknisi['id_teknisi'] ?>" <?= ($laporan['id_teknisi'] == $teknisi['id_teknisi']) ? 'selected' : '' ?>><?= htmlspecialchars($teknisi['nama_teknisi']) ?></option><?php endforeach; ?></select></div>
+                                            <div class="mb-3"><label class="form-label">Estimasi Selesai</label><input type="date" name="estimasi_selesai" class="form-control" value="<?= htmlspecialchars($laporan['estimasi_selesai'] ?? '') ?>"></div>
+                                        </div>
+                                        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-success">Simpan</button></div>
+                                    </form>
+                                </div></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -151,6 +125,5 @@ try {
     </div>
 </div>
 <?php
-// Panggil footer. File ini sudah berisi tag penutup html, body, dan link JS
 require_once 'includes/footer.php'; 
 ?>
