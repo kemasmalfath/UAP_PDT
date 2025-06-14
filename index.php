@@ -66,7 +66,6 @@ $categories = $fasilitasModel->getAllCategories();
             <div>
                 <?php if(isset($_SESSION['user_id'])): ?>
                     <div class="flex items-center space-x-4">
-                        <span class="text-gray-600"><?= $_SESSION['user_name'] ?></span>
                         <a href="logout.php" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-light">Logout</a>
                     </div>
                 <?php else: ?>

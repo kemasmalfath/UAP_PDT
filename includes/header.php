@@ -29,7 +29,7 @@ require_once __DIR__ . '/../config/database.php';
             <li class="nav-item">
               <a class="nav-link" href="buat-laporan.php">Buat Laporan</a>
             </li>
-            <?php if (in_array($_SESSION['peran'], ['teknisi', 'admin'])): ?>
+            <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['teknisi', 'admin'])): ?>
               <li class="nav-item">
                 <a class="nav-link active" href="teknisi_dashboard.php">Panel Teknisi</a>
               </li>
