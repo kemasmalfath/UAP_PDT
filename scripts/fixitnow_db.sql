@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 14, 2025 at 01:27 PM
+-- Generation Time: Jun 15, 2025 at 12:48 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -232,7 +232,8 @@ INSERT INTO `users` (`id_user`, `nama`, `email`, `password`, `role`, `created_at
 (4, 'Mahasiswa 1', 'mahasiswa1@kampus.ac.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', '2025-06-14 05:30:29'),
 (5, 'Dosen 1', 'dosen1@kampus.ac.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', '2025-06-14 05:30:29'),
 (6, 'y', 'usera@user.com', '$2y$10$.flP8D6MUMUOXcD2HJgmSO8f66tXp9eO41UoEiVd1.aZB.LeXtIOe', 'user', '2025-06-14 05:32:07'),
-(12, 'Teknisi 3', 'teknisi3@gmail.com', '$2y$10$8oHRNw22puupi3nf8/hJKOjGzVYwCak2H4hWdrebKCqRxS2voJlQO', 'teknisi', '2025-06-14 05:58:53');
+(12, 'Teknisi 3', 'teknisi3@gmail.com', '$2y$10$8oHRNw22puupi3nf8/hJKOjGzVYwCak2H4hWdrebKCqRxS2voJlQO', 'teknisi', '2025-06-14 05:58:53'),
+(13, 'user123', 'user123@gmail.com', '$2y$10$M83.TAnKLQ7A7OJ6Why51eKPNPoZTwpaEFbR/3XxcYuS9aWpwMaF.', 'user', '2025-06-15 12:31:19');
 
 --
 -- Indexes for dumped tables
@@ -319,7 +320,7 @@ ALTER TABLE `teknisi`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables

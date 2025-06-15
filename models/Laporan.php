@@ -8,6 +8,46 @@ class Laporan {
         $this->pdo = $db_connection;
     }
 
+    public function getReports($status = '', $page = 1, $perPage = 10) {
+        $offset = ($page - 1) * $perPage;
+        $params = [];
+
+        $sql = "SELECT l.*, f.nama_fasilitas, u.nama as nama_pelapor 
+                FROM laporan l
+                JOIN fasilitas f ON l.id_fasilitas = f.id_fasilitas
+                JOIN users u ON l.id_pelapor = u.id_user";
+
+        if ($status !== '') {
+            $sql .= " WHERE l.status = ?";
+            $params[] = $status;
+        }
+
+        $perPage = (int)$perPage;
+        $offset = (int)$offset;
+
+        $sql .= " ORDER BY l.tanggal_lapor DESC LIMIT $perPage OFFSET $offset";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalFilteredReports($status = '') {
+        $sql = "SELECT COUNT(*) FROM laporan";
+        $params = [];
+
+        if ($status !== '') {
+            $sql .= " WHERE status = ?";
+            $params[] = $status;
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchColumn();
+    }
+
     public function getAllLaporan() {
         $sql = "SELECT 
                     l.id_laporan, l.deskripsi_kerusakan, l.status, 
@@ -26,7 +66,7 @@ class Laporan {
                         WHEN 'Selesai' THEN 3
                         ELSE 4
                     END, l.tanggal_lapor DESC";
-        
+
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -58,14 +98,14 @@ class Laporan {
 
     public function getLatestReports($limit = 5) {
         try {
+            $limit = (int)$limit;
             $query = "SELECT l.*, f.nama_fasilitas, u.nama as nama_pelapor 
                       FROM laporan l 
                       JOIN fasilitas f ON l.id_fasilitas = f.id_fasilitas 
                       JOIN users u ON l.id_pelapor = u.id_user 
                       ORDER BY l.tanggal_lapor DESC 
-                      LIMIT ?";
+                      LIMIT $limit";
             $stmt = $this->pdo->prepare($query);
-            $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -97,7 +137,7 @@ class Laporan {
             throw new Exception("Error fetching reports by status: " . $e->getMessage());
         }
     }
-    
+
     public function getReportById($id) {
         try {
             $query = "SELECT l.*, f.nama_fasilitas, f.lokasi, u.nama as nama_pelapor 
@@ -111,6 +151,23 @@ class Laporan {
         } catch (PDOException $e) {
             throw new Exception("Error fetching report: " . $e->getMessage());
         }
+    }
+
+    public function getRataRataPerbaikan($id_kategori) {
+    $query = "SELECT AVG(TIMESTAMPDIFF(HOUR, l.tanggal_lapor, l.tanggal_selesai)) AS rata_rata_jam
+              FROM laporan l
+              JOIN fasilitas f ON l.id_fasilitas = f.id_fasilitas
+              WHERE l.status = 'Selesai'
+              AND f.id_kategori = :id_kategori
+              AND l.tanggal_selesai IS NOT NULL";
+
+    $stmt = $this->pdo->prepare($query);
+    $stmt->bindParam(':id_kategori', $id_kategori);
+    $stmt->execute();
+
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $row && $row['rata_rata_jam'] !== null ? floatval($row['rata_rata_jam']) : 0;
     }
 }
 ?>
