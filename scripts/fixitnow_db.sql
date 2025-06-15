@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 15, 2025 at 12:48 PM
+-- Generation Time: Jun 15, 2025 at 02:03 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -140,7 +140,9 @@ INSERT INTO `laporan` (`id_laporan`, `id_pelapor`, `id_fasilitas`, `deskripsi_ke
 (2, 5, 3, 'Lampu koridor berkedip-kedip dan terkadang mati', 'Ditangani', '2025-06-09 12:30:29', 3, '2025-06-16', NULL),
 (3, 4, 7, 'Proyektor tidak menyala saat dihubungkan ke laptop', 'Baru', '2025-06-13 12:30:29', NULL, NULL, NULL),
 (4, 5, 5, 'Keran toilet bocor', 'Baru', '2025-06-14 12:30:29', NULL, NULL, NULL),
-(5, 6, 4, 'hujan', 'Baru', '2025-06-14 20:22:18', NULL, NULL, NULL);
+(5, 6, 4, 'hujan', 'Selesai', '2025-06-14 20:22:18', 1, '2025-06-15', '2025-06-15 20:44:55'),
+(6, 14, 1, 'coba', 'Ditangani', '2025-06-15 20:40:21', 1, '2025-06-15', NULL),
+(7, 14, 8, 'kldka', 'Ditangani', '2025-06-15 20:41:48', 1, '2025-06-15', NULL);
 
 --
 -- Triggers `laporan`
@@ -182,7 +184,12 @@ INSERT INTO `notifikasi` (`id_notifikasi`, `id_laporan`, `pesan`, `dibaca`, `tan
 (5, 2, 'Laporan Anda sedang ditangani oleh Teknisi 2. Estimasi selesai: 2023-06-18', 0, '2025-06-14 05:30:29'),
 (6, 3, 'Laporan baru telah masuk!', 0, '2025-06-14 05:30:29'),
 (7, 4, 'Laporan baru telah masuk!', 0, '2025-06-14 05:30:29'),
-(8, 5, 'Laporan baru telah masuk!', 0, '2025-06-14 13:22:18');
+(8, 5, 'Laporan baru telah masuk!', 0, '2025-06-14 13:22:18'),
+(9, 6, 'Laporan baru telah masuk!', 0, '2025-06-15 13:40:21'),
+(10, 7, 'Laporan baru telah masuk!', 0, '2025-06-15 13:41:48'),
+(11, 7, 'Laporan Anda sedang ditangani oleh Admin. Estimasi selesai: 2025-06-15', 0, '2025-06-15 13:44:29'),
+(12, 6, 'Laporan Anda sedang ditangani oleh Admin. Estimasi selesai: 2025-06-15', 0, '2025-06-15 13:44:39'),
+(13, 5, 'Laporan Anda sedang ditangani oleh Admin. Estimasi selesai: 2025-06-15', 0, '2025-06-15 13:44:55');
 
 -- --------------------------------------------------------
 
@@ -233,7 +240,8 @@ INSERT INTO `users` (`id_user`, `nama`, `email`, `password`, `role`, `created_at
 (5, 'Dosen 1', 'dosen1@kampus.ac.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', '2025-06-14 05:30:29'),
 (6, 'y', 'usera@user.com', '$2y$10$.flP8D6MUMUOXcD2HJgmSO8f66tXp9eO41UoEiVd1.aZB.LeXtIOe', 'user', '2025-06-14 05:32:07'),
 (12, 'Teknisi 3', 'teknisi3@gmail.com', '$2y$10$8oHRNw22puupi3nf8/hJKOjGzVYwCak2H4hWdrebKCqRxS2voJlQO', 'teknisi', '2025-06-14 05:58:53'),
-(13, 'user123', 'user123@gmail.com', '$2y$10$M83.TAnKLQ7A7OJ6Why51eKPNPoZTwpaEFbR/3XxcYuS9aWpwMaF.', 'user', '2025-06-15 12:31:19');
+(13, 'user123', 'user123@gmail.com', '$2y$10$M83.TAnKLQ7A7OJ6Why51eKPNPoZTwpaEFbR/3XxcYuS9aWpwMaF.', 'user', '2025-06-15 12:31:19'),
+(14, 'coba', 'coba@gmail.com', '$2y$10$8J4U5HJUFl0dNrBIYDyECe9KhVX3hee7qd9kORvCy6ZzNWcSBMp/C', 'teknisi', '2025-06-15 13:28:53');
 
 --
 -- Indexes for dumped tables
@@ -302,13 +310,13 @@ ALTER TABLE `kategori_fasilitas`
 -- AUTO_INCREMENT for table `laporan`
 --
 ALTER TABLE `laporan`
-  MODIFY `id_laporan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_laporan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `notifikasi`
 --
 ALTER TABLE `notifikasi`
-  MODIFY `id_notifikasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_notifikasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `teknisi`
@@ -320,7 +328,7 @@ ALTER TABLE `teknisi`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables

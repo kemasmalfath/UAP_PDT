@@ -27,7 +27,7 @@ $success = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate inputs
     $idFasilitas = filter_input(INPUT_POST, 'id_fasilitas', FILTER_VALIDATE_INT);
-    $deskripsi = trim(filter_input(INPUT_POST, 'deskripsi', FILTER_SANITIZE_STRING));
+    $deskripsi = trim(filter_input(INPUT_POST, 'deskripsi', FILTER_SANITIZE_SPECIAL_CHARS));
     
     if (!$idFasilitas) {
         $errors[] = "Pilih fasilitas yang valid";

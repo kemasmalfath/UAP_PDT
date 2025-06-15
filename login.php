@@ -41,10 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id'] = $user['id_user'];
                 $_SESSION['user_name'] = $user['nama'];
                 $_SESSION['user_email'] = $user['email'];
-                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['role'] = $user['role'];
                 
-                // Redirect to requested page or index
-                header('Location: ' . $redirect);
+                // Redirect based on role
+                if ($user['role'] === 'admin') {
+                    header('Location: index.php');
+                } elseif ($user['role'] === 'teknisi') {
+                    header('Location: teknisi_dashboard.php');
+                } else {
+                    header('Location: index.php');
+                }
                 exit;
             } else {
                 $errors[] = "Email atau password salah";

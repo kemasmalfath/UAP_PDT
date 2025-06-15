@@ -1,8 +1,10 @@
 <?php
 // proses_laporan.php
 
-// Panggil file konfigurasi database secara langsung
 require_once 'config/database.php';
+
+$database = new Database();
+$pdo = $database->getConnection();
 
 // Pastikan skrip ini hanya diakses melalui metode POST dari form
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

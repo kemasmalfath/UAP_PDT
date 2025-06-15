@@ -23,20 +23,17 @@ require_once __DIR__ . '/../config/database.php';
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li class="nav-item">
-              <a class="nav-link" href="index.php">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="buat-laporan.php">Buat Laporan</a>
-            </li>
             <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['teknisi', 'admin'])): ?>
               <li class="nav-item">
                 <a class="nav-link active" href="teknisi_dashboard.php">Panel Teknisi</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="backup.php">Backup Database</a>
+              </li>
             <?php endif; ?>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                <?= htmlspecialchars($_SESSION['nama_lengkap']) ?>
+                <?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="logout.php">Logout</a></li>

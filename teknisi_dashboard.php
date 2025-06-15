@@ -17,7 +17,7 @@ $db_connection = $database->getConnection();
 
 // KEAMANAN
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['teknisi', 'admin'])) {
-    header("Location: teknisi_login.php?pesan=tidak_diizinkan");
+    header("Location: login.php?pesan=tidak_diizinkan");
     exit();
 }
 
@@ -43,8 +43,9 @@ try {
 ?>
 
 <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h3>🛠️ Daftar Laporan Kerusakan Fasilitas</h3>
+        <a href="backup.php" class="btn btn-warning btn-sm">Backup Database</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
